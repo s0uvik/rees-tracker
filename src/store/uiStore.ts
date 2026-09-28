@@ -11,6 +11,9 @@ type UiState = {
   /** User chose "skip for now" on onboarding; drives the persistent banner. */
   onboardingSkipped: boolean;
   setOnboardingSkipped: (v: boolean) => void;
+  /** Persisted flags loaded and service status checked at least once. */
+  bootstrapped: boolean;
+  setBootstrapped: () => void;
 };
 
 export const useUiStore = create<UiState>((set) => ({
@@ -20,4 +23,6 @@ export const useUiStore = create<UiState>((set) => ({
   setServiceEnabled: (serviceEnabled) => set({ serviceEnabled }),
   onboardingSkipped: false,
   setOnboardingSkipped: (onboardingSkipped) => set({ onboardingSkipped }),
+  bootstrapped: false,
+  setBootstrapped: () => set({ bootstrapped: true }),
 }));
