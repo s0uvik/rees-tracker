@@ -17,7 +17,12 @@ describe('groupByDay', () => {
     expect(items.map((i) => i.type)).toEqual(['header', 'view', 'view', 'header', 'view']);
     const [first, , , second] = items;
     expect(first).toMatchObject({ type: 'header', title: 'Today', count: 2, durationMs: 4000 });
-    expect(second).toMatchObject({ type: 'header', title: 'Yesterday', count: 1, durationMs: 6000 });
+    expect(second).toMatchObject({
+      type: 'header',
+      title: 'Yesterday',
+      count: 1,
+      durationMs: 6000,
+    });
   });
 
   it('returns nothing for no rows', () => {
