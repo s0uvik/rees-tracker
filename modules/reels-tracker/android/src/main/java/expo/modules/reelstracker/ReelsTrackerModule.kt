@@ -185,9 +185,7 @@ class ReelsTrackerModule : Module() {
 
     /** Debug screen only: inserts synthetic views so the dashboard and badge can be tested without Instagram. */
     AsyncFunction("insertDebugEvents") { events: List<DebugEventSpec> ->
-      for (e in events) {
-        store.startView(e.app, e.viewedAt, e.durationMs)
-      }
+      store.insertMany(events.map { Triple(it.app, it.viewedAt, it.durationMs) })
       ReelsAccessibilityService.notifyDataChanged(cleared = false)
       ReelsEventBus.emitDataChanged()
       events.size

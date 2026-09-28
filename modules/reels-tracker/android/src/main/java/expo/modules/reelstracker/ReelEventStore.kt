@@ -71,6 +71,18 @@ class ReelEventStore private constructor(context: Context) :
     return writableDatabase.insertOrThrow("views", null, values)
   }
 
+  /** Bulk insert in one transaction (debug seeding). */
+  fun insertMany(rows: List<Triple<String, Long, Long?>>) {
+    val db = writableDatabase
+    db.beginTransaction()
+    try {
+      for ((app, viewedAt, durationMs) in rows) startView(app, viewedAt, durationMs)
+      db.setTransactionSuccessful()
+    } finally {
+      db.endTransaction()
+    }
+  }
+
   fun addDuration(id: Long, durationMs: Long) {
     if (durationMs <= 0) return
     writableDatabase.execSQL(

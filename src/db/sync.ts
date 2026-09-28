@@ -5,7 +5,7 @@ import { upsertNativeEvents } from './queries';
 
 const BATCH = 500;
 /** Safety valve so a misbehaving buffer can never spin forever. */
-const MAX_BATCHES = 40;
+const MAX_BATCHES = 100;
 
 let inFlight: Promise<number> | null = null;
 
