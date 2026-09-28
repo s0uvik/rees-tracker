@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Outer frame is transparent padding so the pulse animation (scale > 1) is not
+  clipped by the WRAP_CONTENT overlay window.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/reels_badge_root"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:clipChildren="false"
+  android:clipToPadding="false"
+  android:padding="4dp">
+
+  <LinearLayout
+    android:id="@+id/reels_badge_pill"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/badge_background"
+    android:elevation="3dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="6dp">
+
+    <TextView
+      android:id="@+id/reels_badge_count"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:fontFeatureSettings="tnum"
+      android:includeFontPadding="false"
+      android:textColor="#FFFFFFFF"
+      android:textSize="14sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/reels_badge_detail"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="6dp"
+      android:includeFontPadding="false"
+      android:textColor="#D9FFFFFF"
+      android:textSize="12sp"
+      android:visibility="gone" />
+  </LinearLayout>
+</FrameLayout>
