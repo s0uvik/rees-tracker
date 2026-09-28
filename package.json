@@ -56,13 +56,5 @@
     "test": "jest",
     "test:native": "cd android && ./gradlew :reels-tracker:testDebugUnitTest"
   },
-  "private": true,
-  "jest": {
-    "preset": "jest-expo",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/android/",
-      "/ios/"
-    ]
-  }
+  "private": true
 }
