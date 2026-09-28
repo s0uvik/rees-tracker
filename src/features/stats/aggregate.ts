@@ -67,7 +67,9 @@ export function rollupEvents(
       row.timedCount += 1;
     }
   }
-  return [...map.values()].sort((a, b) => (a.day === b.day ? a.hour - b.hour : a.day < b.day ? -1 : 1));
+  return [...map.values()].sort((a, b) =>
+    a.day === b.day ? a.hour - b.hour : a.day < b.day ? -1 : 1,
+  );
 }
 
 export function summarize(rows: readonly HourRow[]): PeriodSummary {
@@ -172,14 +174,7 @@ export function buildWeeklyStats(
 ): PeriodStats {
   const thisWeek = startOfISOWeek(now);
   const starts = Array.from({ length: weeks }, (_, i) => subWeeks(thisWeek, weeks - 1 - i));
-  return build(
-    'weekly',
-    rows,
-    starts,
-    (d) => `W${getISOWeek(d)}`,
-    thisWeek,
-    subWeeks(thisWeek, 1),
-  );
+  return build('weekly', rows, starts, (d) => `W${getISOWeek(d)}`, thisWeek, subWeeks(thisWeek, 1));
 }
 
 export function buildMonthlyStats(

@@ -9,8 +9,8 @@ import type { HourRow } from '@/features/stats/types';
 type StatsState = {
   /** Day × hour rollup covering every stats view (see statsRangeStart). */
   rows: HourRow[];
-  /** When `rows` were computed; also the "now" all derived stats use. */
-  loadedAt: number | null;
+  /** When `rows` were computed (store creation time before the first load); the "now" all derived stats use. */
+  loadedAt: number;
   refreshing: boolean;
   error: string | null;
   /** Sync the native buffer, then re-query. Concurrent calls coalesce into one follow-up run. */
@@ -42,7 +42,7 @@ export const useStatsStore = create<StatsState>((set) => {
 
   return {
     rows: [],
-    loadedAt: null,
+    loadedAt: Date.now(),
     refreshing: false,
     error: null,
     refresh: () => {

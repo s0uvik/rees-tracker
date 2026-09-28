@@ -66,7 +66,7 @@ export function useStatsAutoRefresh(): void {
 
 function useNow(): Date {
   const loadedAt = useStatsStore((s) => s.loadedAt);
-  return useMemo(() => new Date(loadedAt ?? Date.now()), [loadedAt]);
+  return useMemo(() => new Date(loadedAt), [loadedAt]);
 }
 
 export function useDailyStats(): PeriodStats {
