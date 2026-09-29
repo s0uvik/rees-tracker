@@ -1,19 +1,19 @@
-package expo.modules.reelstracker
+package dev.reelscounter.app.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import expo.modules.reelstracker.badge.BadgeConfig
-import expo.modules.reelstracker.badge.BadgeGeometry
-import expo.modules.reelstracker.badge.BadgeSize
-import expo.modules.reelstracker.badge.BadgeTapAction
-import expo.modules.reelstracker.badge.BadgeVisibility
-import expo.modules.reelstracker.badge.Edge
-import expo.modules.reelstracker.detection.TrackedAppConfig
+import dev.reelscounter.app.badge.BadgeConfig
+import dev.reelscounter.app.badge.BadgeGeometry
+import dev.reelscounter.app.badge.BadgeSize
+import dev.reelscounter.app.badge.BadgeTapAction
+import dev.reelscounter.app.badge.BadgeVisibility
+import dev.reelscounter.app.badge.Edge
+import dev.reelscounter.app.detection.TrackedAppConfig
 
 /**
- * Settings the service needs while the RN app is closed. SharedPreferences is
- * the source of truth for these; JS reads and writes them through the module.
- * The service observes changes via [SharedPreferences.OnSharedPreferenceChangeListener].
+ * App settings, shared by the UI and the accessibility service. The service
+ * observes changes via [SharedPreferences.OnSharedPreferenceChangeListener],
+ * so a toggle in Settings takes effect on the badge immediately.
  */
 class ReelsPrefs(context: Context) {
   val raw: SharedPreferences =
@@ -87,6 +87,11 @@ class ReelsPrefs(context: Context) {
       .apply()
   }
 
+  /** User chose "skip for now" on onboarding; the dashboard then shows a persistent banner. */
+  var onboardingSkipped: Boolean
+    get() = raw.getBoolean(KEY_ONBOARDING_SKIPPED, false)
+    set(value) = raw.edit().putBoolean(KEY_ONBOARDING_SKIPPED, value).apply()
+
   /** Local epoch-day on which the daily-limit notification was last posted. */
   var limitNotifiedDay: Long
     get() = raw.getLong(KEY_LIMIT_NOTIFIED_DAY, Long.MIN_VALUE)
@@ -106,6 +111,7 @@ class ReelsPrefs(context: Context) {
     const val KEY_POS_Y = "badge_pos_y"
     const val KEY_POS_RESET_TOKEN = "badge_pos_reset"
     const val KEY_LIMIT_NOTIFIED_DAY = "limit_notified_day"
+    const val KEY_ONBOARDING_SKIPPED = "onboarding_skipped"
 
     /** Keys whose change should re-render / re-evaluate the badge. */
     val BADGE_KEYS = setOf(

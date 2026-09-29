@@ -1,4 +1,4 @@
-package expo.modules.reelstracker
+package dev.reelscounter.app.service
 
 import android.accessibilityservice.AccessibilityService
 import android.app.Notification
@@ -18,12 +18,16 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import expo.modules.reelstracker.badge.DailyCounter
-import expo.modules.reelstracker.badge.FloatingBadgeController
-import expo.modules.reelstracker.detection.ReelDetector
-import expo.modules.reelstracker.detection.ReelViewTracker
-import expo.modules.reelstracker.detection.TrackedAppConfig
-import expo.modules.reelstracker.detection.TrackedAppUi
+import dev.reelscounter.app.R
+import dev.reelscounter.app.badge.DailyCounter
+import dev.reelscounter.app.badge.FloatingBadgeController
+import dev.reelscounter.app.data.DataEvents
+import dev.reelscounter.app.data.ReelEventStore
+import dev.reelscounter.app.data.ReelsPrefs
+import dev.reelscounter.app.detection.ReelDetector
+import dev.reelscounter.app.detection.ReelViewTracker
+import dev.reelscounter.app.detection.TrackedAppConfig
+import dev.reelscounter.app.detection.TrackedAppUi
 import java.lang.ref.WeakReference
 import java.time.LocalDate
 
@@ -222,7 +226,7 @@ class ReelsAccessibilityService :
           io.post {
             val id = activeRowId ?: return@post
             runCatching { store.addDuration(id, duration) }.onFailure { logError("addDuration", it) }
-            ReelsEventBus.emitDataChanged()
+            DataEvents.notifyChanged()
           }
         }
         is ReelViewTracker.Action.Started -> {
@@ -236,7 +240,7 @@ class ReelsAccessibilityService :
             runCatching { store.startView(app, at) }
               .onSuccess { id ->
                 activeRowId = id
-                ReelsEventBus.emitReelViewed(ReelsEventBus.ReelViewed(id, app, at, null))
+                DataEvents.notifyChanged()
               }
               .onFailure {
                 activeRowId = null
@@ -257,10 +261,7 @@ class ReelsAccessibilityService :
     val now = System.currentTimeMillis()
     val since = counter.startOfDayMs(now)
     io.post {
-      val totals = runCatching {
-        store.prune(now - PRUNE_AFTER_MS)
-        store.totalsSince(since)
-      }.getOrElse {
+      val totals = runCatching { store.totalsSince(since) }.getOrElse {
         logError("totals", it)
         return@post
       }
@@ -357,7 +358,6 @@ class ReelsAccessibilityService :
     private const val TAG = "ReelsService"
     private const val LIMIT_CHANNEL_ID = "reels_daily_limit"
     private const val LIMIT_NOTIFICATION_ID = 4201
-    private const val PRUNE_AFTER_MS = 3L * 24 * 60 * 60 * 1000
 
     /** Transient system surfaces that should not count as "left the tracked app". */
     private val IGNORED_WINDOW_PACKAGES = setOf(
@@ -371,7 +371,7 @@ class ReelsAccessibilityService :
     val isRunning: Boolean
       get() = instance?.get() != null
 
-    /** Called by the JS module after it inserts debug rows or wipes data. */
+    /** Called by the UI after it inserts debug rows or wipes data. */
     fun notifyDataChanged(cleared: Boolean) {
       val service = instance?.get() ?: return
       service.main.post { service.onExternalDataChange(cleared) }
