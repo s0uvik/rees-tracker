@@ -19,7 +19,3 @@ captures/
 .DS_Store
 Thumbs.db
 
-# Leftovers from the React Native version (feat/reels-counter)
-node_modules/
-/android/
-.expo/
