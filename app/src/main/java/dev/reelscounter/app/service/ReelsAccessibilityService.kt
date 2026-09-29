@@ -72,6 +72,23 @@ class ReelsAccessibilityService :
     scheduleMidnightReset()
   }
 
+  /**
+   * Live badge clock. Runs only while a reel is open AND the badge is on
+   * screen, so there is no timer at all outside the Reels viewer. Each tick is
+   * aligned to the open reel's next whole second, so the clock flips evenly.
+   */
+  private var ticking = false
+  private val tickRunnable = object : Runnable {
+    override fun run() {
+      if (!connected || !tracker.isViewOpen || !badge.isShowing) {
+        ticking = false
+        return
+      }
+      val elapsed = pushLiveClock()
+      main.postDelayed(this, LIVE_TICK_MS - (elapsed % LIVE_TICK_MS))
+    }
+  }
+
   private val screenReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
       if (intent.action == Intent.ACTION_SCREEN_OFF) {
@@ -127,6 +144,8 @@ class ReelsAccessibilityService :
     instance = null
     cancelInspection()
     main.removeCallbacks(midnightRunnable)
+    main.removeCallbacks(tickRunnable)
+    ticking = false
     apply(tracker.onLeftViewer(System.currentTimeMillis()))
     badge.destroy()
     prefs.raw.unregisterOnSharedPreferenceChangeListener(this)
@@ -177,6 +196,7 @@ class ReelsAccessibilityService :
       cancelInspection()
       apply(tracker.onLeftViewer(System.currentTimeMillis()))
     }
+    ensureLiveTicking()
   }
 
   /** Trailing-edge coalescing with a max wait, so bursts cost one inspection. */
@@ -251,6 +271,22 @@ class ReelsAccessibilityService :
         }
       }
     }
+    if (tracker.isViewOpen) pushLiveClock()
+    ensureLiveTicking()
+  }
+
+  /** Pushes today's live total and the open reel's time to the badge; returns the open reel's elapsed ms. */
+  private fun pushLiveClock(): Long {
+    val now = System.currentTimeMillis()
+    val elapsed = tracker.openElapsedMs(now)
+    badge.updateLive(counter.liveDurationMs(now, tracker.openSince, elapsed), elapsed)
+    return elapsed
+  }
+
+  private fun ensureLiveTicking() {
+    if (ticking || !tracker.isViewOpen || !badge.isShowing) return
+    ticking = true
+    main.post(tickRunnable)
   }
 
   // endregion
@@ -269,6 +305,8 @@ class ReelsAccessibilityService :
         if (!connected) return@post
         counter.load(totals.count, totals.durationMs, now)
         badge.update(totals.count, totals.durationMs, pulse = false)
+        if (tracker.isViewOpen) pushLiveClock()
+        ensureLiveTicking()
       }
     }
   }
@@ -291,6 +329,9 @@ class ReelsAccessibilityService :
       ReelsPrefs.KEY_POS_RESET_TOKEN -> badge.onPositionReset()
       in ReelsPrefs.BADGE_KEYS -> badge.onSettingsChanged()
     }
+    // A settings change can show the badge (or its clock) while a reel is open.
+    if (tracker.isViewOpen) pushLiveClock()
+    ensureLiveTicking()
   }
 
   private fun onExternalDataChange(cleared: Boolean) {
@@ -358,6 +399,7 @@ class ReelsAccessibilityService :
     private const val TAG = "ReelsService"
     private const val LIMIT_CHANNEL_ID = "reels_daily_limit"
     private const val LIMIT_NOTIFICATION_ID = 4201
+    private const val LIVE_TICK_MS = 1_000L
 
     /** Transient system surfaces that should not count as "left the tracked app". */
     private val IGNORED_WINDOW_PACKAGES = setOf(

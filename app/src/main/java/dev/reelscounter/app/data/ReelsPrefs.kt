@@ -36,6 +36,7 @@ class ReelsPrefs(context: Context) {
       opacity = BadgeConfig.clampOpacity(raw.getFloat(KEY_BADGE_OPACITY, 0.9f)),
       tapAction = BadgeTapAction.from(raw.getString(KEY_BADGE_TAP, null)),
       dailyLimit = raw.getInt(KEY_DAILY_LIMIT, 0).takeIf { it > 0 },
+      showTimer = raw.getBoolean(KEY_BADGE_TIMER, true),
     )
 
   /** Partial update; null arguments are left untouched. A [dailyLimit] <= 0 clears the limit. */
@@ -46,6 +47,7 @@ class ReelsPrefs(context: Context) {
     opacity: Float? = null,
     tapAction: BadgeTapAction? = null,
     dailyLimit: Int? = null,
+    showTimer: Boolean? = null,
   ) {
     raw.edit().apply {
       if (enabled != null) {
@@ -57,6 +59,7 @@ class ReelsPrefs(context: Context) {
       size?.let { putString(KEY_BADGE_SIZE, it.key) }
       opacity?.let { putFloat(KEY_BADGE_OPACITY, BadgeConfig.clampOpacity(it)) }
       tapAction?.let { putString(KEY_BADGE_TAP, it.key) }
+      showTimer?.let { putBoolean(KEY_BADGE_TIMER, it) }
       dailyLimit?.let {
         putInt(KEY_DAILY_LIMIT, it.coerceAtLeast(0))
         remove(KEY_LIMIT_NOTIFIED_DAY)
@@ -105,6 +108,7 @@ class ReelsPrefs(context: Context) {
     const val KEY_BADGE_SIZE = "badge_size"
     const val KEY_BADGE_OPACITY = "badge_opacity"
     const val KEY_BADGE_TAP = "badge_tap_action"
+    const val KEY_BADGE_TIMER = "badge_show_timer"
     const val KEY_BADGE_SUPPRESSED = "badge_suppressed"
     const val KEY_DAILY_LIMIT = "daily_limit"
     const val KEY_POS_EDGE = "badge_pos_edge"
@@ -116,7 +120,7 @@ class ReelsPrefs(context: Context) {
     /** Keys whose change should re-render / re-evaluate the badge. */
     val BADGE_KEYS = setOf(
       KEY_BADGE_ENABLED, KEY_BADGE_VISIBILITY, KEY_BADGE_SIZE, KEY_BADGE_OPACITY,
-      KEY_BADGE_TAP, KEY_BADGE_SUPPRESSED, KEY_DAILY_LIMIT, KEY_POS_RESET_TOKEN,
+      KEY_BADGE_TAP, KEY_BADGE_TIMER, KEY_BADGE_SUPPRESSED, KEY_DAILY_LIMIT, KEY_POS_RESET_TOKEN,
     )
   }
 }

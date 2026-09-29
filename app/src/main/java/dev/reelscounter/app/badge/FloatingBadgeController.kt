@@ -52,10 +52,12 @@ class FloatingBadgeController(
   private var trackedAppInForeground = false
   private var count = 0
   private var watchMs = 0L
+  private var currentReelMs = 0L
 
   private var root: View? = null
   private var pill: View? = null
   private var countText: TextView? = null
+  private var timerText: TextView? = null
   private var detailText: TextView? = null
   private var params: WindowManager.LayoutParams? = null
   private var currentEdge = BadgeGeometry.DEFAULT_EDGE
@@ -105,6 +107,21 @@ class FloatingBadgeController(
     if (pulse) pulse()
   }
 
+  /**
+   * Once-a-second clock update while a reel plays: [totalMs] is today's watch
+   * time including the open reel, [currentReelMs] the open reel alone. Only
+   * the clock texts change (no colour or accessibility-label churn).
+   */
+  fun updateLive(totalMs: Long, currentReelMs: Long) {
+    watchMs = totalMs
+    this.currentReelMs = currentReelMs
+    renderClocks()
+  }
+
+  /** The badge window is currently on screen. */
+  val isShowing: Boolean
+    get() = root != null
+
   fun onConfigurationChanged(@Suppress("UNUSED_PARAMETER") newConfig: Configuration) {
     val view = root ?: return
     // Wait for the new display metrics, then restore from the orientation-independent position.
@@ -140,6 +157,7 @@ class FloatingBadgeController(
     root = view
     pill = view.findViewById(R.id.reels_badge_pill)
     countText = view.findViewById(R.id.reels_badge_count)
+    timerText = view.findViewById(R.id.reels_badge_timer)
     detailText = view.findViewById(R.id.reels_badge_detail)
 
     val lp = WindowManager.LayoutParams(
@@ -201,6 +219,7 @@ class FloatingBadgeController(
     root = null
     pill = null
     countText = null
+    timerText = null
     detailText = null
     params = null
   }
@@ -213,6 +232,8 @@ class FloatingBadgeController(
     view.alpha = config.opacity
     countText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, size.textSp)
     detailText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, size.detailSp)
+    timerText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, size.detailSp + 1f)
+    timerText?.visibility = if (config.showTimer) View.VISIBLE else View.GONE
     pill?.setPadding(dp(size.padHDp), dp(size.padVDp), dp(size.padHDp), dp(size.padVDp))
     applyColor()
   }
@@ -224,7 +245,7 @@ class FloatingBadgeController(
 
   private fun renderContent() {
     countText?.text = BadgeText.count(count)
-    detailText?.text = BadgeText.duration(watchMs)
+    renderClocks()
     val limit = config.dailyLimit
     root?.contentDescription = if (limit != null) {
       "$count of $limit reels today"
@@ -232,6 +253,12 @@ class FloatingBadgeController(
       "$count reels today"
     }
     applyColor()
+  }
+
+  private fun renderClocks() {
+    timerText?.text = BadgeText.clock(watchMs)
+    // Expanded detail: the current reel when the total is already visible, else today's total.
+    detailText?.text = if (config.showTimer) "▶ " + BadgeText.clock(currentReelMs) else BadgeText.duration(watchMs)
   }
 
   private fun pulse() {
