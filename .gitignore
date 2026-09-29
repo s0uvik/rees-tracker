@@ -3,7 +3,7 @@
 build/
 /app/build/
 local.properties
-*.apk
+# *.apk
 *.aab
 .kotlin/
 captures/
