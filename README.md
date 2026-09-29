@@ -6,7 +6,7 @@ Instagram has no API for watch history, so counting happens on the device throug
 
 > v1 is meant for sideloading. Read [Play Store policy](#play-store-policy) before you publish it.
 >
-> An earlier React Native + Expo version of this app lives on the `feat/reels-counter` branch.
+> An earlier React Native + Expo version exists only in git history (commits before `cb714ec`).
 
 ---
 
