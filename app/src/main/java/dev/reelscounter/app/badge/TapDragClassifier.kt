@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.badge
+package dev.reelscounter.app.badge
 
 /**
  * Classifies a touch sequence on the badge as tap, drag or long-press.

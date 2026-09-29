@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.badge
+package dev.reelscounter.app.badge
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

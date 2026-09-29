@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.detection
+package dev.reelscounter.app.detection
 
 /**
  * Pure state machine that turns "this reel is visible now" observations into

@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.badge
+package dev.reelscounter.app.badge
 
 /** Pure value types for the floating badge. No Android imports: shared with JVM tests. */
 

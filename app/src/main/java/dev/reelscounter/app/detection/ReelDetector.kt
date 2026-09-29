@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.detection
+package dev.reelscounter.app.detection
 
 import android.graphics.Rect
 import android.os.SystemClock

@@ -1,6 +1,6 @@
-package expo.modules.reelstracker.badge
+package dev.reelscounter.app.badge
 
-import expo.modules.reelstracker.badge.TapDragClassifier.Gesture
+import dev.reelscounter.app.badge.TapDragClassifier.Gesture
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

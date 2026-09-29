@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.badge
+package dev.reelscounter.app.badge
 
 import android.accessibilityservice.AccessibilityService
 import android.animation.ValueAnimator
@@ -23,8 +23,8 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
-import expo.modules.reelstracker.R
-import expo.modules.reelstracker.ReelsPrefs
+import dev.reelscounter.app.R
+import dev.reelscounter.app.data.ReelsPrefs
 
 /**
  * Draggable "🎬 42" pill drawn over other apps.

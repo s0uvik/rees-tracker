@@ -1,6 +1,6 @@
-package expo.modules.reelstracker.detection
+package dev.reelscounter.app.detection
 
-import expo.modules.reelstracker.detection.ReelViewTracker.Action
+import dev.reelscounter.app.detection.ReelViewTracker.Action
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

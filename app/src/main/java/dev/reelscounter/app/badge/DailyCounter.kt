@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.badge
+package dev.reelscounter.app.badge
 
 import java.time.Instant
 import java.time.ZoneId

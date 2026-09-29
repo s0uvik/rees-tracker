@@ -1,4 +1,4 @@
-package expo.modules.reelstracker.detection
+package dev.reelscounter.app.detection
 
 /**
  * Everything that depends on the tracked apps' private UI lives here.
