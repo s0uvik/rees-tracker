@@ -114,4 +114,27 @@ class ReelViewTrackerTest {
     val actions = t.onReelVisible("youtube_shorts", "idx:3", 2_000)
     assertEquals(Action.Started("youtube_shorts", 2_000, isNewView = true), actions.last())
   }
+
+  @Test
+  fun exposesTheOpenSegmentForTheLiveClock() {
+    val t = ReelViewTracker(maxViewDurationMs = 60_000)
+    assertEquals(null, t.openSince)
+    assertEquals(0L, t.openElapsedMs(5_000))
+    t.onReelVisible(ig, "a", 1_000)
+    assertEquals(1_000L, t.openSince)
+    assertEquals(4_000L, t.openElapsedMs(5_000))
+    assertEquals(60_000L, t.openElapsedMs(1_000_000)) // same cap as a close
+    t.onLeftViewer(6_000)
+    assertEquals(null, t.openSince)
+    assertEquals(0L, t.openElapsedMs(7_000))
+  }
+
+  @Test
+  fun swipingRestartsTheCurrentReelClock() {
+    val t = ReelViewTracker()
+    t.onReelVisible(ig, "a", 1_000)
+    t.onReelVisible(ig, "b", 9_000)
+    assertEquals(9_000L, t.openSince)
+    assertEquals(500L, t.openElapsedMs(9_500))
+  }
 }

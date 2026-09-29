@@ -68,4 +68,30 @@ class DailyCounterTest {
     val start = at(2026, 11, 1, 0)
     assertEquals(25 * 3_600_000L, counter.msUntilNextMidnight(start))
   }
+
+  @Test
+  fun liveDurationAddsTheOpenReel() {
+    val now = at(2026, 6, 1, 20, 0, 30)
+    counter.load(10, 60_000, now)
+    assertEquals(60_000L, counter.liveDurationMs(now, openSinceMs = null, openElapsedMs = 0))
+    assertEquals(90_000L, counter.liveDurationMs(now, openSinceMs = at(2026, 6, 1, 20, 0, 0), openElapsedMs = 30_000))
+  }
+
+  @Test
+  fun liveDurationIgnoresAReelOpenedBeforeMidnight() {
+    // Matches addDuration: the view is attributed to the day it started.
+    val now = at(2026, 6, 2, 0, 1)
+    counter.load(0, 0, now)
+    assertEquals(0L, counter.liveDurationMs(now, openSinceMs = at(2026, 6, 1, 23, 59), openElapsedMs = 120_000))
+  }
+
+  @Test
+  fun liveDurationDoesNotJumpWhenTheViewCloses() {
+    val start = at(2026, 6, 1, 20)
+    val end = start + 42_000
+    counter.load(0, 0, start)
+    val live = counter.liveDurationMs(end, openSinceMs = start, openElapsedMs = 42_000)
+    counter.addDuration(42_000, viewStartedAtMs = start, nowMs = end)
+    assertEquals(live, counter.durationMs(end))
+  }
 }

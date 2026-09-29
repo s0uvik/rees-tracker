@@ -36,6 +36,16 @@ class ReelViewTracker(
   val isViewOpen: Boolean
     get() = open != null
 
+  /** Start of the segment currently being watched, or null when no reel is open. */
+  val openSince: Long?
+    get() = open?.startedAt
+
+  /** How long the open segment has run, with the same cap a close would apply; 0 when nothing is open. */
+  fun openElapsedMs(now: Long): Long {
+    val current = open ?: return 0L
+    return (now - current.startedAt).coerceIn(0L, maxViewDurationMs)
+  }
+
   fun onReelVisible(app: String, fingerprint: String, now: Long): List<Action> {
     val current = open
     if (current != null && current.app == app && current.fingerprint == fingerprint) {

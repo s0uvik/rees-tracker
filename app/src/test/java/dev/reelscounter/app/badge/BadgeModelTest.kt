@@ -48,4 +48,20 @@ class BadgeModelTest {
     assertEquals("18m", BadgeText.duration(18 * 60_000L + 5_000))
     assertEquals("1h 5m", BadgeText.duration(65 * 60_000L))
   }
+
+  @Test
+  fun clockText() {
+    assertEquals("0:00", BadgeText.clock(0))
+    assertEquals("0:07", BadgeText.clock(7_999))
+    assertEquals("4:07", BadgeText.clock(247_000))
+    assertEquals("59:59", BadgeText.clock(3_599_000))
+    assertEquals("1:00:00", BadgeText.clock(3_600_000))
+    assertEquals("1:02:07", BadgeText.clock(3_727_000))
+    assertEquals("0:00", BadgeText.clock(-5))
+  }
+
+  @Test
+  fun timerIsOnByDefault() {
+    assertEquals(true, BadgeConfig().showTimer)
+  }
 }

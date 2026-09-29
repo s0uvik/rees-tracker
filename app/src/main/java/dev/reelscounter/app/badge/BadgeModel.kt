@@ -1,5 +1,7 @@
 package dev.reelscounter.app.badge
 
+import java.util.Locale
+
 /** Pure value types for the floating badge. No Android imports: shared with JVM tests. */
 
 enum class BadgeVisibility(val key: String) {
@@ -39,6 +41,8 @@ data class BadgeConfig(
   val tapAction: BadgeTapAction = BadgeTapAction.EXPAND,
   /** null = no limit. */
   val dailyLimit: Int? = null,
+  /** Show today's watch time as a live clock next to the count. */
+  val showTimer: Boolean = true,
 ) {
   companion object {
     const val MIN_OPACITY = 0.4f
@@ -84,6 +88,19 @@ object BadgeText {
       hours > 0 -> "${hours}h ${minutes}m"
       minutes > 0 -> "${minutes}m"
       else -> "${seconds}s"
+    }
+  }
+
+  /** Live clock: "4:07" under an hour, "1:02:07" after. */
+  fun clock(ms: Long): String {
+    val totalSeconds = (ms / 1000).coerceAtLeast(0)
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return if (hours > 0) {
+      String.format(Locale.ROOT, "%d:%02d:%02d", hours, minutes, seconds)
+    } else {
+      String.format(Locale.ROOT, "%d:%02d", minutes, seconds)
     }
   }
 }

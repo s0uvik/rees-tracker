@@ -52,6 +52,18 @@ class DailyCounter(private val zone: () -> ZoneId = { ZoneId.systemDefault() }) 
     return durationMs
   }
 
+  /**
+   * Today's watch time including the reel playing right now, for the live
+   * badge clock. Mirrors [addDuration]: an open segment that started before
+   * today's midnight is not counted, so the clock never jumps back when the
+   * view finally closes.
+   */
+  fun liveDurationMs(nowMs: Long, openSinceMs: Long?, openElapsedMs: Long): Long {
+    val closed = durationMs(nowMs)
+    if (openSinceMs == null || openElapsedMs <= 0) return closed
+    return if (dayOf(openSinceMs) == dayKey) closed + openElapsedMs else closed
+  }
+
   /** True when [nowMs] is on a different local day than the cached totals. */
   fun isStale(nowMs: Long) = dayOf(nowMs) != dayKey
 
