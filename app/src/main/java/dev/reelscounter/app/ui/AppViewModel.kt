@@ -149,6 +149,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
   fun setBadgeSize(s: BadgeSize) = prefs.updateBadgeConfig(size = s)
   fun setBadgeOpacity(o: Float) = prefs.updateBadgeConfig(opacity = o)
   fun setBadgeTapAction(a: BadgeTapAction) = prefs.updateBadgeConfig(tapAction = a)
+  fun setBadgeShowTimer(show: Boolean) = prefs.updateBadgeConfig(showTimer = show)
   fun resetBadgePosition() = prefs.resetBadgePosition()
 
   /** null or <= 0 clears the limit. */

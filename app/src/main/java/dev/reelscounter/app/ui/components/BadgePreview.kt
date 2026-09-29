@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +42,7 @@ fun BadgePreview(
   size: BadgeSize,
   opacity: Float,
   dailyLimit: Int?,
+  showTimer: Boolean,
   dimmed: Boolean,
 ) {
   var expanded by remember { mutableStateOf(false) }
@@ -67,9 +69,18 @@ fun BadgePreview(
       verticalAlignment = Alignment.CenterVertically,
     ) {
       Text(BadgeText.count(count), color = Color.White, fontSize = size.textSp.sp, fontWeight = FontWeight.Bold)
+      if (showTimer) {
+        Text(
+          BadgeText.clock(watchMs),
+          color = Color.White.copy(alpha = 0.95f),
+          fontSize = (size.detailSp + 1f).sp,
+          style = TextStyle(fontFeatureSettings = "tnum"),
+          modifier = Modifier.padding(start = 6.dp),
+        )
+      }
       if (expanded) {
         Text(
-          BadgeText.duration(watchMs),
+          if (showTimer) "▶ 0:00" else BadgeText.duration(watchMs),
           color = Color.White.copy(alpha = 0.85f),
           fontSize = size.detailSp.sp,
           modifier = Modifier.padding(start = 6.dp),

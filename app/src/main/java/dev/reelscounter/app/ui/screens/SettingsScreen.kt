@@ -161,6 +161,7 @@ fun SettingsScreen(vm: AppViewModel, modifier: Modifier = Modifier, onOpenDebug:
         size = b.size,
         opacity = opacityDraft ?: b.opacity,
         dailyLimit = b.dailyLimit,
+        showTimer = b.showTimer,
         dimmed = !badgeControlsEnabled,
       )
       ToggleRow(
@@ -198,6 +199,13 @@ fun SettingsScreen(vm: AppViewModel, modifier: Modifier = Modifier, onOpenDebug:
             colors = SliderDefaults.colors(thumbColor = c.accent, activeTrackColor = c.accent, inactiveTrackColor = c.line),
           )
         }
+        ToggleRow(
+          "Show live watch time",
+          "A clock next to the count that ticks while a reel plays",
+          b.showTimer,
+          vm::setBadgeShowTimer,
+          enabled = badgeControlsEnabled,
+        )
         Column {
           Muted("On tap", Modifier.padding(bottom = Space.sm))
           Segmented(TAP, b.tapAction, vm::setBadgeTapAction, badgeControlsEnabled)

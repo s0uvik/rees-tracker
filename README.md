@@ -100,12 +100,13 @@ Some phone makers (Xiaomi, Oppo, Vivo, Samsung and others) kill background servi
 
 ## Floating badge
 
-A small pill (`🎬 42`) with today's count that floats over other apps.
+A small pill (`🎬 42  18:05`) that floats over other apps. It shows today's reel count and a **live clock** of today's watch time, which ticks every second while a reel is playing.
 
 - **Turn it on:** Settings → Floating badge → *Show floating badge*. The accessibility service draws the badge (as `TYPE_ACCESSIBILITY_OVERLAY`), so the service must be on. No "display over other apps" permission is needed.
 - **Visible:** *In Instagram* (default) shows the badge only while a tracked app is in the foreground. *Always* keeps it visible everywhere.
 - **Move it:** drag it. On release it snaps to the nearest side of the screen and stays clear of the status bar, navigation bar and cutout. The position is saved as *side + vertical fraction*, so it comes back in the same place after rotation or a restart. **Reset badge position** returns it to the default spot.
-- **Tap:** either expands the pill for 2.5 s to show today's watch time, or opens the app. Choose which in *On tap*.
+- **Live watch time:** the clock includes the reel you're watching right now and stops when you leave the Reels viewer. It only runs while a reel is open and the badge is on screen. Turn it off with *Show live watch time*.
+- **Tap:** either expands the pill for 2.5 s to show the current reel's time (`▶ 0:12`, or today's total if the clock is off), or opens the app. Choose which in *On tap*.
 - **Hide:** long-press it, or drag it onto the **✕** at the bottom. It stays hidden until you switch it off and on again in Settings.
 - **Colours** (when a daily limit is set): neutral under 75% of the limit, amber from 75% to 99%, red at or over the limit.
 - **Size** S/M/L and **opacity** 40–100% have a live preview in Settings.
@@ -225,7 +226,7 @@ Policies change, so read the current [Play Console Help: Use of the Accessibilit
 - **YouTube Shorts** is behind a toggle and its IDs haven't been checked. Treat it as experimental.
 - A reel is counted when you **land on it**, after the 500 ms debounce. Reels you skip in under 500 ms aren't counted. Coming back to the same reel adds to its watch time without adding to the count.
 - A single view is capped at 10 minutes. Turning the screen off or leaving the Reels viewer ends the current view.
-- The badge's live count includes the reel you're watching right now. Its watch time is added when the view ends.
+- The badge's live count and clock include the reel you're watching right now. The dashboard's watch time updates when that view ends.
 - If Android kills the service (OEM battery savers), nothing is counted until the system restarts it.
 - Watch time is attributed to the day the view **started**.
 - The history screen's day header totals cover only the rows loaded so far (the list loads 100 at a time).
