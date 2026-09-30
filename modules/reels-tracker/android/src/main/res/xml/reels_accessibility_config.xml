@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  No android:packageNames filter on purpose: the service must see
+  TYPE_WINDOW_STATE_CHANGED from other apps to know when the user LEAVES a
+  tracked app (closes the open view, hides the badge). Every other event from
+  untracked packages is discarded on the first line of onAccessibilityEvent.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+  android:accessibilityEventTypes="typeViewScrolled|typeWindowContentChanged|typeWindowStateChanged"
+  android:accessibilityFeedbackType="feedbackGeneric"
+  android:accessibilityFlags="flagReportViewIds|flagIncludeNotImportantViews"
+  android:canRetrieveWindowContent="true"
+  android:canPerformGestures="false"
+  android:notificationTimeout="100"
+  android:description="@string/reels_tracker_service_description"
+  android:summary="@string/reels_tracker_service_summary" />
