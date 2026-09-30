@@ -1,41 +1,25 @@
-This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
-
-## Expo has changed — do not trust your training data
-
-Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
-
-1. Read the major version of the `expo` package in `package.json`.
-2. Fetch the matching versioned docs: `https://docs.expo.dev/versions/v<major>.0.0/`
-3. For anything else, fetch https://docs.expo.dev/llms.txt — an index of all Expo docs with corrections to common LLM misconceptions. Follow its links to the specific page you need; never answer from memory.
+This is a native Android app written in Kotlin with Jetpack Compose (single `app` module, Gradle Kotlin DSL). It counts Instagram Reels on-device through an AccessibilityService.
 
 ## Commands
 
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
-
 ```bash
-npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
-npx expo start              # start the dev server
-npx expo lint               # lint
-npx tsc --noEmit            # typecheck
-npx expo-doctor             # diagnose dependency and config issues
-npx expo install --fix      # fix incompatible package versions
+./gradlew assembleDebug       # build app/build/outputs/apk/debug/app-debug.apk
+./gradlew installDebug        # build + install on a connected device
+./gradlew testDebugUnitTest   # JVM unit tests
+./gradlew lintDebug           # Android lint
 ```
 
-Run lint and typecheck before declaring any task done.
+Run the unit tests before declaring a task done.
 
-## Navigation & Routing
+## Layout
 
-- Use **Expo Router** for all navigation. Routes live in `app/` (repo root) — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) in `src/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
-
-## Building with EAS
-
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
-Docs: https://docs.expo.dev/eas/index.md
+- `app/src/main/java/dev/reelscounter/app/` — `service/`, `detection/`, `badge/`, `data/`, `stats/`, `ui/`
+- `detection/TrackedAppConfig.kt` is the only file that should change when Instagram's view IDs change.
+- Keep pure logic (tracker, geometry, gestures, stats, formatting) free of Android imports so it stays JVM-testable.
 
 ## Rules
 
-- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
-- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
-- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+- Dependencies and versions live in `gradle/libs.versions.toml`; add new ones there.
+- Keep the dependency list small (no chart, navigation or DI libraries without a clear need).
+- Never store or log reel content, usernames or captions. Only timestamps, app key and duration are persisted.
+- The app has no `INTERNET` permission; don't add network code.
